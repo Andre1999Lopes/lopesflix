@@ -25,7 +25,7 @@ function CadastroCategoria(){
     }
 
     useEffect(() => {
-            const URL = 'http://localhost:8080/categorias'
+            const URL = 'https://lopesflix.herokuapp.com/categorias'
             fetch(URL).then(async (respostaServer) => {
                 const resposta = await respostaServer.json()
                 setCategorias([...resposta,])
