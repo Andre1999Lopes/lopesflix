@@ -70,25 +70,44 @@ const Input = styled.input`
     }
 `
 
-function FormField({ label, name, value, onChange, type }){
+function FormField({ label, name, value, onChange, type, suggestions }){
     const isTypeTextArea = type === 'textarea'
     const tag = isTypeTextArea ? 'textarea' : 'input'
     const hasValue = Boolean(value.length)
+    const fieldId = `id_${name}`
+    const hasSuggestion = Boolean(suggestions.length)
 
     return(
         <FormFieldWrapper>
-            <Label>
+            <Label htmlFor={fieldId}>
                 <Input
                     as={tag}
+                    id={fieldId}
                     name={name}
                     type={type}
                     value={value}
                     hasValue={hasValue}
                     onChange={onChange}
+                    list={`suggestionFor_${fieldId}`}
+                    autoComplete='off'
                 />
                 <Label.Text>
                     {label}
                 </Label.Text>
+                {
+                    hasSuggestion && (
+                        <datalist id={`suggestionFor_${fieldId}`}>
+                            {
+                                suggestions.map(suggestion => (
+                                    <option key={`suggestionFor_${fieldId}_option_${suggestion}`} value={suggestion}>
+                                        {suggestion}
+                                    </option>)
+                                )
+                            }
+                        </datalist>
+                    )
+                }
+                
             </Label>
         </FormFieldWrapper>
     )
@@ -97,6 +116,7 @@ function FormField({ label, name, value, onChange, type }){
 FormField.defaultProps = {
     type: 'text',
     value: '',
+    suggestions: []
 }
 
 FormField.propTypes = {
@@ -104,7 +124,8 @@ FormField.propTypes = {
     type: PropTypes.string,
     name: PropTypes.string.isRequired,
     value: PropTypes.string,
-    onChange: PropTypes.func.isRequired
+    onChange: PropTypes.func.isRequired,
+    suggestions: PropTypes.arrayOf(PropTypes.string)
 }
 
 export default FormField

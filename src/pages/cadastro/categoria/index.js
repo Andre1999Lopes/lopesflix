@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import PageDefault from '../../../components/pageDefault'
 import FormField from '../../../components/FormFields'
 import Button from '../../../components/Button'
+import useForm from '../../../hooks/useForm'
 
 function CadastroCategoria(){
     const valoresIniciais = {
@@ -11,26 +12,18 @@ function CadastroCategoria(){
         cor: '#000000'
     }
     const [ categorias, setCategorias ] = useState([])
-    const [ values, setValues ] = useState(valoresIniciais)
-
-    function setValue(chave, valor){
-        setValues({
-            ...values,
-            [chave]: valor //chave dinâmica
-        })
-    }
-
-    function handleChange(e){
-        setValue(e.target.getAttribute('name'), e.target.value)
-    }
+    
+    const { handleChange, values, clearForm } = useForm(valoresIniciais)
 
     useEffect(() => {
-            const URL = 'https://lopesflix.herokuapp.com/categorias'
+            const URL = window.location.hostname.includes('localhost') ? 
+            'http://localhost:8080/categorias' :
+            'https://lopesflix.herokuapp.com/categorias'
             fetch(URL).then(async (respostaServer) => {
                 const resposta = await respostaServer.json()
                 setCategorias([...resposta,])
             })
-        })
+        }, [])
 
     return(
         <PageDefault>
@@ -38,7 +31,7 @@ function CadastroCategoria(){
             <form onSubmit={e => {
                 e.preventDefault()
                 setCategorias([...categorias, values])
-                setValues(valoresIniciais)
+                clearForm()
             }}>
                 <FormField
                     label='Nome da categoria: '
@@ -70,7 +63,7 @@ function CadastroCategoria(){
 
             <ul>
                 {categorias.map((categoria, index) => (
-                    <li key={`${categoria}${index}`}>{categoria.nome}</li>
+                    <li key={`${categoria.titulo}`}>{categoria.titulo}</li>
                 ))}
             </ul>        
             
